@@ -6,8 +6,8 @@ class detect_face():
     def __init__(self):
 
         self.face_detector = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")
-        self.face_detector2 = cv2.CascadeClassifier("opencv_haarcascade_eye.xml at 4.x · opencv_opencv.html")
-        self.face_detector3 = cv2.CascadeClassifier("opencv_haarcascade_smile.xml at 4.x · opencv_opencv.html")
+        self.eye_detector = cv2.CascadeClassifier("opencv_haarcascade_eye.xml at 4.x · opencv_opencv.html")
+        self.lip_detector = cv2.CascadeClassifier("opencv_haarcascade_smile.xml at 4.x · opencv_opencv.html")
         self.flag= 0
 
         video_cap = cv2.VideoCapture(0)
@@ -41,15 +41,15 @@ class detect_face():
 
     def sticker_eyes_lip(self):
         self.flag = 2
-        sticker2 = cv2.imread("eye.jpg", cv2.IMREAD_UNCHANGED)
-        eyes = self.face_detector.detectMultiScale(self.frame , 1.2 ,minNeighbors=45)
+        sticker2 = cv2.imread("eye.jpg")
+        eyes = self.eye_detector.detectMultiScale(self.frame , 1.2 ,minNeighbors=45)
         for (x,y,w,h) in eyes:
             try:
                 self.frame=cvzone.overlayPNG(self.frame,sticker2,[x,y])
             except:
                 print("try egin")
-        sticker3 = cv2.imread("lips.jpg",cv2.IMREAD_UNCHANGED)
-        lips = self.face_detector.detectMultiScale(self.frame , 1.8 , minNeighbors=22)
+        sticker3 = cv2.imread("lips.jpg")
+        lips = self.lip_detector.detectMultiScale(self.frame , 1.8 , minNeighbors=22)
         for (lx , ly, lw,lh) in lips:
             try:
                 self.frame = cvzone.overlayPNG(self.frame,sticker3,[lx+10,ly-15])
@@ -72,9 +72,18 @@ class detect_face():
     def black_pen(self):
         self.flag = 4
         black = cv2.GaussianBlur(self.frame,(21,21) , 0)
-        self.frame = self.frame / black
-
+        self.frame = 255 - black
         return self.frame
             
 
 detect_face()    
+
+
+# img = cv2.imread('Mona_Lisa.jpg', 0)
+
+# inverted = 255 - img
+# blurred = cv2.GaussianBlur(inverted, (21, 21), 0)
+# inverted_blurred = 255 - blurred
+
+# sketch = img / inverted_blurred
+# sketch = sketch * 255
