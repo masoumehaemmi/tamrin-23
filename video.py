@@ -6,8 +6,8 @@ class detect_face():
     def __init__(self):
 
         self.face_detector = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")
-        self.eye_detector = cv2.CascadeClassifier("opencv_haarcascade_eye.xml at 4.x · opencv_opencv.html")
-        self.lip_detector = cv2.CascadeClassifier("opencv_haarcascade_smile.xml at 4.x · opencv_opencv.html")
+        self.eye_detector = cv2.CascadeClassifier("eyes.xml")
+        self.lip_detector = cv2.CascadeClassifier("lip.xml")
         self.flag= 0
 
         video_cap = cv2.VideoCapture(0)
@@ -41,20 +41,23 @@ class detect_face():
 
     def sticker_eyes_lip(self):
         self.flag = 2
-        sticker2 = cv2.imread("eye.jpg")
-        eyes = self.eye_detector.detectMultiScale(self.frame , 1.2 ,minNeighbors=45)
-        for (x,y,w,h) in eyes:
+        sticker2 = cv2.imread("eye.png",cv2.IMREAD_UNCHANGED)
+        eyes = self.eye_detector.detectMultiScale(self.frame , 1.2 ,minNeighbors=10)
+        for eye in eyes:
+            x,y,w,h=eye
             try:
-                self.frame=cvzone.overlayPNG(self.frame,sticker2,[x,y])
-            except:
-                print("try egin")
-        sticker3 = cv2.imread("lips.jpg")
-        lips = self.lip_detector.detectMultiScale(self.frame , 1.8 , minNeighbors=22)
+                eye_resized = cv2.resize(sticker2,(w,h))
+                self.frame=cvzone.overlayPNG(self.frame,eye_resized,[x,y])
+            except Exception as e:
+                print(e)
+        sticker3 = cv2.imread("lip.png",cv2.IMREAD_UNCHANGED)
+        lips = self.lip_detector.detectMultiScale(self.frame , 1.8 , minNeighbors=50)
         for (lx , ly, lw,lh) in lips:
             try:
-                self.frame = cvzone.overlayPNG(self.frame,sticker3,[lx+10,ly-15])
-            except:
-                print("try egin")
+                lip_resized = cv2.resize(sticker3 , (lw,lh))
+                self.frame = cvzone.overlayPNG(self.frame,lip_resized,[lx+20,ly-25])
+            except Exception as e :
+                 print(e)
         return self.frame
 
 
